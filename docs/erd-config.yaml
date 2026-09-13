@@ -1,0 +1,15 @@
+# ERD configuration for django-notifications — consumed by the ERD tooling (skill entirius-backend:erd-verify).
+app_label: django_notifications
+groups:
+  - name: notifications
+    title: "Notifications & Deliveries"
+    models:
+      - Channel
+      - Notification
+      - Delivery
+  - name: escalation
+    title: "Delivery Configs & Escalation Rules"
+    models:
+      - Channel
+      - DeliveryChannelConfig
+      - EscalationRule
