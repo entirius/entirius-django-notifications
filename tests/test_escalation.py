@@ -94,7 +94,7 @@ def test_N05_missing_webhook_url_skipped_with_warning(
     with caplog.at_level(logging.WARNING, logger="django_notifications"):
         _escalate(django_capture_on_commit_callbacks, notification.created_at + timedelta(minutes=2))
     chat = Delivery.objects.get(notification=notification, kind=DeliveryKind.GOOGLE_CHAT)
-    assert chat.status == DeliveryStatus.SKIPPED
+    assert (chat.status, chat.attempts) == (DeliveryStatus.SKIPPED, 0)
     assert "google_chat delivery skipped" in caplog.text
 
 

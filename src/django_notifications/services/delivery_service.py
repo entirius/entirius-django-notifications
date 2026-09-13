@@ -30,7 +30,6 @@ def deliver(delivery: Delivery) -> Delivery:
         return delivery
     notification = delivery.notification
     config = _active_config(notification, delivery.kind)
-    delivery.attempts += 1
     try:
         _SENDERS[delivery.kind](notification, config)
     except DeliverySkipped as exc:
@@ -49,6 +48,8 @@ def _active_config(notification: Notification, kind: str) -> dict:
 
 
 def _finish(delivery: Delivery, status: str, error: str = "") -> Delivery:
+    if status != DeliveryStatus.SKIPPED:  # a skip never tried to send
+        delivery.attempts += 1
     delivery.status = status
     delivery.last_error = error
     delivery.sent_at = timezone.now() if status == DeliveryStatus.SENT else None

@@ -30,9 +30,11 @@ def notify(
     Raises `Channel.DoesNotExist` for an unknown channel and `ValueError` for an unknown severity.
     """
     severity = Severity(severity).value
-    channel = Channel.objects.get(idx=channel_idx)
     dedup_key = hashlib.sha256(f"{subject_ref}|{title}".encode()).hexdigest()[:64]
     with transaction.atomic():
+        # Locking the channel row serialises concurrent notify() calls, so a first occurrence
+        # cannot be inserted twice (there is no existing notification row to lock yet).
+        channel = Channel.objects.select_for_update().get(idx=channel_idx)
         repeat = _recent_unread(channel, dedup_key, dedup_window_s)
         if repeat is not None:
             return _count_repeat(repeat)
@@ -53,7 +55,7 @@ def notify(
 
 def _recent_unread(channel: Channel, dedup_key: str, window_s: int) -> Notification | None:
     since = timezone.now() - timedelta(seconds=window_s)
-    candidates = Notification.objects.select_for_update().filter(
+    candidates = Notification.objects.filter(
         channel=channel, dedup_key=dedup_key, read_at__isnull=True, created_at__gte=since
     )
     return candidates.order_by("-created_at").first()
