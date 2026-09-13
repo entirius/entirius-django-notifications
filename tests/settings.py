@@ -1,9 +1,7 @@
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
-"""Standalone test settings — Postgres via DATABASE_URL (zeno container), else zeno's published port 5532."""
-
-import os
+"""Standalone test settings — Postgres via DATABASE_URL (zeno `make module-test` passes its own), else a neutral CI default."""
 
 import dj_database_url
 
@@ -50,11 +48,14 @@ REST_FRAMEWORK = {
 }
 SPECTACULAR_SETTINGS = {"TITLE": "django-notifications Admin API v2", "VERSION": "2.0.0", "OAS_VERSION": "3.1.0"}
 
-_DEFAULT_URL = "postgresql://entirius:entirius-dev@localhost:5532/entirius"
-DATABASES = {"default": dj_database_url.parse(os.environ.get("DATABASE_URL", _DEFAULT_URL))}
+DATABASES = {
+    "default": dj_database_url.config(default="postgresql://postgres:postgres@localhost:5432/test_notifications")
+}
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 USE_TZ = True
 TIME_ZONE = "UTC"
 
 EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
 DEFAULT_FROM_EMAIL = "notifications@example.test"
+# Every sink here is a sandbox (locmem mail, respx/monkeypatched chat); the live gate has its own test.
+NOTIFICATIONS_ALLOW_LIVE_SENDS = True

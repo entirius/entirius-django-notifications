@@ -10,14 +10,32 @@ from django.db import transaction
 from django.utils import timezone
 
 from django_notifications.enums import DeliveryStatus
-from django_notifications.models import Delivery, EscalationRule, Notification
+from django_notifications.models import Channel, Delivery, EscalationRule, Notification
+from django_notifications.settings import NOTIFICATIONS_DELIVERY_STALE_MINUTES
 from django_notifications.tasks.deliver import deliver
 
 
-def run_escalation(*, now: datetime | None = None) -> int:
-    """Create (and enqueue) every due delivery; returns how many were created. Safe to run repeatedly."""
+def run_escalation(*, now: datetime | None = None, channel: Channel | None = None) -> int:
+    """Create (and enqueue) every due delivery; returns how many were created. Safe to run repeatedly.
+
+    `channel` limits the run to one channel. Stale `pending` deliveries (enqueue lost) are enqueued again.
+    """
     now = now or timezone.now()
-    return sum(_escalate_rule(rule, now) for rule in EscalationRule.objects.all())
+    rules = EscalationRule.objects.all()
+    if channel is not None:
+        rules = rules.filter(channel=channel)
+    _requeue_stale(now, channel)
+    return sum(_escalate_rule(rule, now) for rule in rules)
+
+
+def _requeue_stale(now: datetime, channel: Channel | None) -> None:
+    stale = Delivery.objects.filter(
+        status=DeliveryStatus.PENDING, modified_at__lte=now - timedelta(minutes=NOTIFICATIONS_DELIVERY_STALE_MINUTES)
+    )
+    if channel is not None:
+        stale = stale.filter(notification__channel=channel)
+    for delivery_id in stale.values_list("pk", flat=True):
+        transaction.on_commit(partial(deliver.delay, delivery_id))
 
 
 def _escalate_rule(rule: EscalationRule, now: datetime) -> int:

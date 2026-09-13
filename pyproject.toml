@@ -27,10 +27,20 @@ dependencies = [
 
 [project.optional-dependencies]
 dev  = ["ruff", "pre-commit"]
-test = ["pytest", "pytest-django", "factory-boy", "psycopg[binary]>=3.1", "dj-database-url>=2.0"]
 # Soft dependencies: email / Google Chat deliveries are skipped with a warning when absent.
 email = ["entirius-django-email>=4.0.1"]
 googlechat = ["entirius-py-googlechat>=0.1.0"]
+# The suite exercises both soft dependencies, so `test` pulls them in: `uv sync --extra test` suffices.
+test = [
+    "pytest",
+    "pytest-django",
+    "factory-boy",
+    "respx",
+    "psycopg[binary]>=3.1",
+    "dj-database-url>=2.0",
+    "entirius-django-email>=4.0.1",
+    "entirius-py-googlechat>=0.1.0",
+]
 
 [project.urls]
 Repository = "https://github.com/entirius/entirius-django-notifications"

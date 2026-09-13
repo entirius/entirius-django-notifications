@@ -5,6 +5,7 @@ import pytest
 from django.db import connection
 from django.test.utils import CaptureQueriesContext
 
+from django_notifications.api.admin.views import test_views
 from django_notifications.models import Notification
 from tests.conftest import api_url
 
@@ -89,6 +90,13 @@ def test_test_notify_rejects_bad_severity(admin_api, channel):
 def test_test_run_escalation_endpoint(admin_api, channel):
     response = admin_api.post(api_url("test/run-escalation/"), {"now": None}, format="json")
     assert response.json() == {"created": 0}
+
+
+def test_test_run_escalation_endpoint_acts_on_its_channel_only(admin_api, channel, monkeypatch):
+    calls: list[dict] = []
+    monkeypatch.setattr(test_views, "run_escalation", lambda **kwargs: calls.append(kwargs) or 0)
+    admin_api.post(api_url("test/run-escalation/"), {"now": None}, format="json")
+    assert calls == [{"now": None, "channel": channel}]
 
 
 @pytest.mark.parametrize("path", ["test/notify/", "test/run-escalation/"])

@@ -12,7 +12,7 @@ class DeliveryResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     kind: str = Field(description="in_app, email or google_chat.", examples=["email"])
-    status: str = Field(description="pending, sent, failed or skipped.", examples=["sent"])
+    status: str = Field(description="pending, sending, sent, failed or skipped.", examples=["sent"])
     attempts: int = Field(description="Send attempts made.", examples=[1])
     last_error: str = Field(description="Error class and status of the last failure.", examples=[""])
     sent_at: datetime | None = Field(description="When the step was sent.", examples=["2026-09-13T12:03:00Z"])

@@ -357,10 +357,13 @@ googlechat = [
 ]
 test = [
     { name = "dj-database-url" },
+    { name = "entirius-django-email" },
+    { name = "entirius-py-googlechat" },
     { name = "factory-boy" },
     { name = "psycopg", extra = ["binary"] },
     { name = "pytest" },
     { name = "pytest-django" },
+    { name = "respx" },
 ]
 
 [package.metadata]
@@ -372,9 +375,11 @@ requires-dist = [
     { name = "djangorestframework-simplejwt", specifier = ">=5.3" },
     { name = "drf-spectacular", specifier = ">=0.27" },
     { name = "entirius-django-email", marker = "extra == 'email'", specifier = ">=4.0.1" },
+    { name = "entirius-django-email", marker = "extra == 'test'", specifier = ">=4.0.1" },
     { name = "entirius-django-regional", specifier = ">=2.0.1" },
     { name = "entirius-django-utils", specifier = ">=2.0.0" },
     { name = "entirius-py-googlechat", marker = "extra == 'googlechat'", editable = "../../py/entirius-py-googlechat" },
+    { name = "entirius-py-googlechat", marker = "extra == 'test'", editable = "../../py/entirius-py-googlechat" },
     { name = "entirius-py-idx-normalizator", specifier = ">=2.0.0" },
     { name = "factory-boy", marker = "extra == 'test'" },
     { name = "pre-commit", marker = "extra == 'dev'" },
@@ -382,9 +387,10 @@ requires-dist = [
     { name = "pydantic", specifier = ">=2.0" },
     { name = "pytest", marker = "extra == 'test'" },
     { name = "pytest-django", marker = "extra == 'test'" },
+    { name = "respx", marker = "extra == 'test'" },
     { name = "ruff", marker = "extra == 'dev'" },
 ]
-provides-extras = ["dev", "test", "email", "googlechat"]
+provides-extras = ["dev", "email", "googlechat", "test"]
 
 [[package]]
 name = "entirius-django-regional"
@@ -1035,6 +1041,18 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/22/f5/df4e9027acead3ecc63e50fe1e36aca1523e1719559c499951bb4b53188f/referencing-0.37.0.tar.gz", hash = "sha256:44aefc3142c5b842538163acb373e24cce6632bd54bdb01b21ad5863489f50d8", size = 78036, upload-time = "2025-10-13T15:30:48.871Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/2c/58/ca301544e1fa93ed4f80d724bf5b194f6e4b945841c5bfd555878eea9fcb/referencing-0.37.0-py3-none-any.whl", hash = "sha256:381329a9f99628c9069361716891d34ad94af76e461dcb0335825aecc7692231", size = 26766, upload-time = "2025-10-13T15:30:47.625Z" },
+]
+
+[[package]]
+name = "respx"
+version = "0.23.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "httpx" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/43/98/4e55c9c486404ec12373708d015ebce157966965a5ebe7f28ff2c784d41b/respx-0.23.1.tar.gz", hash = "sha256:242dcc6ce6b5b9bf621f5870c82a63997e8e82bc7c947f9ffe272b8f3dd5a780", size = 29243, upload-time = "2026-04-08T14:37:16.008Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/1d/4a/221da6ca167db45693d8d26c7dc79ccfc978a440251bf6721c9aaf251ac0/respx-0.23.1-py2.py3-none-any.whl", hash = "sha256:b18004b029935384bccfa6d7d9d74b4ec9af73a081cc28600fffc0447f4b8c1a", size = 25557, upload-time = "2026-04-08T14:37:14.613Z" },
 ]
 
 [[package]]

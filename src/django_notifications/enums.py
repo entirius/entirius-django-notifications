@@ -24,6 +24,7 @@ ESCALATION_KIND_CHOICES = [(kind.value, kind.label) for kind in (DeliveryKind.EM
 
 class DeliveryStatus(models.TextChoices):
     PENDING = "pending", "Pending"
+    SENDING = "sending", "Sending"
     SENT = "sent", "Sent"
     FAILED = "failed", "Failed"
     SKIPPED = "skipped", "Skipped"

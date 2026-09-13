@@ -56,6 +56,6 @@ class DevRunEscalationView(_DevelopmentView):
     )
     def post(self, request: Request, channel_idx: str) -> Response:
         body = parse(DevRunEscalationRequest, request.data or {})
-        self.channel(channel_idx)
-        created = run_escalation(now=body.now)
+        channel = self.channel(channel_idx)
+        created = run_escalation(now=body.now, channel=channel)
         return Response(EscalationRunResponse(created=created).model_dump())

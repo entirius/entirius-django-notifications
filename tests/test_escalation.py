@@ -10,9 +10,10 @@ from django.core import mail
 from django.utils import timezone
 
 from django_notifications.enums import DeliveryKind, DeliveryStatus
-from django_notifications.models import Delivery, DeliveryChannelConfig
+from django_notifications.models import Delivery, DeliveryChannelConfig, Notification
 from django_notifications.services.escalation_service import run_escalation
 from tests.conftest import WEBHOOK_URL
+from tests.factories import ChannelFactory, EscalationRuleFactory
 
 
 def _escalate(django_capture_on_commit_callbacks, now) -> int:
@@ -94,7 +95,7 @@ def test_N05_missing_webhook_url_skipped_with_warning(
     with caplog.at_level(logging.WARNING, logger="django_notifications"):
         _escalate(django_capture_on_commit_callbacks, notification.created_at + timedelta(minutes=2))
     chat = Delivery.objects.get(notification=notification, kind=DeliveryKind.GOOGLE_CHAT)
-    assert (chat.status, chat.attempts) == (DeliveryStatus.SKIPPED, 0)
+    assert (chat.status, chat.attempts) == (DeliveryStatus.SKIPPED, 1)  # the claim counts; a skip keeps it
     assert "google_chat delivery skipped" in caplog.text
 
 
@@ -112,10 +113,39 @@ def test_webhook_url_never_logged_or_stored(
 
 @pytest.mark.usefixtures("eager_celery")
 def test_email_without_config_is_skipped(channel, raise_high, django_capture_on_commit_callbacks):
-    from tests.factories import EscalationRuleFactory
-
     EscalationRuleFactory(channel=channel, after_minutes=0)
     notification = raise_high()
     _escalate(django_capture_on_commit_callbacks, notification.created_at)
     assert _statuses(notification)[DeliveryKind.EMAIL] == DeliveryStatus.SKIPPED
     assert mail.outbox == []
+
+
+@pytest.fixture
+def other_channel_notification(db):
+    other = ChannelFactory(idx="other-europe", label="Other Europe")
+    EscalationRuleFactory(channel=other, after_minutes=1)
+    return Notification.objects.create(
+        channel=other, recipient_role="sales", severity="high", subject_ref="lead:7", title="Other waits"
+    )
+
+
+def test_run_escalation_scoped_to_channel(escalation_setup, raise_high, other_channel_notification):
+    notification = raise_high()
+    later = notification.created_at + timedelta(minutes=5)
+    assert run_escalation(now=later, channel=notification.channel) == 2
+    assert not Delivery.objects.filter(notification=other_channel_notification).exists()
+    assert run_escalation(now=later) == 1
+
+
+def test_stale_pending_delivery_requeued(escalation_setup, raise_high, django_capture_on_commit_callbacks, monkeypatch):
+    enqueued: list[int] = []
+    monkeypatch.setattr("django_notifications.services.escalation_service.deliver.delay", enqueued.append)
+    stale = Delivery.objects.create(notification=raise_high(), kind=DeliveryKind.EMAIL)
+    sent = Delivery.objects.create(notification=raise_high(title="Other"), kind=DeliveryKind.EMAIL, status="sent")
+    with django_capture_on_commit_callbacks(execute=True):
+        run_escalation(now=stale.modified_at + timedelta(minutes=29))
+    assert stale.pk not in enqueued
+    with django_capture_on_commit_callbacks(execute=True):
+        run_escalation(now=stale.modified_at + timedelta(minutes=30))
+    assert enqueued.count(stale.pk) == 1
+    assert sent.pk not in enqueued

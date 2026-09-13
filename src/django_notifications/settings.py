@@ -13,3 +13,9 @@ NOTIFICATIONS_DEDUP_WINDOW_S = getattr(settings, "NOTIFICATIONS_DEDUP_WINDOW_S",
 
 # How often the host's beat should run `django_notifications.escalate` (documented in AGENTS.md).
 NOTIFICATIONS_ESCALATION_INTERVAL_S = getattr(settings, "NOTIFICATIONS_ESCALATION_INTERVAL_S", 60)
+
+# A `pending` delivery untouched this long lost its enqueue — the escalation run enqueues it again.
+NOTIFICATIONS_DELIVERY_STALE_MINUTES = getattr(settings, "NOTIFICATIONS_DELIVERY_STALE_MINUTES", 30)
+
+# `NOTIFICATIONS_ALLOW_LIVE_SENDS` (default False) is read at send time by `delivery_service`: outside
+# `ENVIRONMENT == "production"` email and chat deliveries are skipped unless it is true.
