@@ -1,7 +1,8 @@
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
-from django.contrib import admin
+"""Root URL config for django_notifications — mounts the Admin API v2 namespace."""
+
 from django.urls import include, path
 
-urlpatterns = [path("admin/", admin.site.urls), path("", include("django_notifications.urls"))]
+urlpatterns = [path("api/notifications/v2/admin/<str:channel_idx>/", include("django_notifications.api.admin.urls"))]

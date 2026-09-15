@@ -1,0 +1,469 @@
+openapi: 3.1.0
+info:
+  title: django-notifications Admin API v2
+  version: 0.1.0
+paths:
+  /api/notifications/v2/admin/{channel_idx}/notifications/:
+    get:
+      operationId: notifications_list
+      description: Newest first, paginated (`page`, `page_size` ≤ 100).
+      summary: List notifications of the channel
+      parameters:
+      - in: path
+        name: channel_idx
+        schema:
+          type: string
+        required: true
+      - in: query
+        name: page
+        schema:
+          type: integer
+        description: Page number.
+      - in: query
+        name: role
+        schema:
+          type: string
+        description: Only this recipient role.
+      - in: query
+        name: unread
+        schema:
+          type: boolean
+        description: Only unread when 1/true.
+      tags:
+      - Notifications
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationListResponse'
+          description: ''
+        '400':
+          description: No response body
+        '401':
+          description: No response body
+        '403':
+          description: No response body
+        '404':
+          description: No response body
+  /api/notifications/v2/admin/{channel_idx}/notifications/{id}/:
+    get:
+      operationId: api_notifications_v2_admin_notifications_retrieve
+      summary: Get one notification with its deliveries
+      parameters:
+      - in: path
+        name: channel_idx
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Notifications
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationDetailResponse'
+          description: ''
+        '400':
+          description: No response body
+        '401':
+          description: No response body
+        '403':
+          description: No response body
+        '404':
+          description: No response body
+  /api/notifications/v2/admin/{channel_idx}/notifications/{id}/read/:
+    post:
+      operationId: api_notifications_v2_admin_notifications_read_create
+      description: Idempotent — a read notification keeps its first `read_at`.
+      summary: Mark one notification read
+      parameters:
+      - in: path
+        name: channel_idx
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Notifications
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationResponse'
+          description: ''
+        '400':
+          description: No response body
+        '401':
+          description: No response body
+        '403':
+          description: No response body
+        '404':
+          description: No response body
+  /api/notifications/v2/admin/{channel_idx}/notifications/read-all/:
+    post:
+      operationId: api_notifications_v2_admin_notifications_read_all_create
+      summary: Mark every unread notification of the channel read
+      parameters:
+      - in: path
+        name: channel_idx
+        schema:
+          type: string
+        required: true
+      tags:
+      - Notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReadAllRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ReadAllRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ReadAllRequest'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdatedResponse'
+          description: ''
+        '400':
+          description: No response body
+        '401':
+          description: No response body
+        '403':
+          description: No response body
+        '404':
+          description: No response body
+  /api/notifications/v2/admin/{channel_idx}/notifications/unread-count/:
+    get:
+      operationId: api_notifications_v2_admin_notifications_unread_count_retrieve
+      summary: Count unread notifications of the channel
+      parameters:
+      - in: path
+        name: channel_idx
+        schema:
+          type: string
+        required: true
+      tags:
+      - Notifications
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnreadCountResponse'
+          description: ''
+        '400':
+          description: No response body
+        '401':
+          description: No response body
+        '403':
+          description: No response body
+        '404':
+          description: No response body
+components:
+  schemas:
+    DeliveryResponse:
+      properties:
+        kind:
+          description: in_app, email or google_chat.
+          examples:
+          - email
+          title: Kind
+          type: string
+        status:
+          description: pending, sending, sent, failed or skipped.
+          examples:
+          - sent
+          title: Status
+          type: string
+        attempts:
+          description: Send attempts made.
+          examples:
+          - 1
+          title: Attempts
+          type: integer
+        last_error:
+          description: Error class and status of the last failure.
+          examples:
+          - ''
+          title: Last Error
+          type: string
+        sent_at:
+          anyOf:
+          - format: date-time
+            type: string
+          - type: 'null'
+          description: When the step was sent.
+          examples:
+          - '2026-09-13T12:03:00Z'
+          title: Sent At
+      required:
+      - kind
+      - status
+      - attempts
+      - last_error
+      - sent_at
+      title: DeliveryResponse
+      type: object
+    NotificationDetailResponse:
+      properties:
+        id:
+          description: Notification id.
+          examples:
+          - 7
+          title: Id
+          type: integer
+        recipient_role:
+          description: Who should act.
+          examples:
+          - sales
+          title: Recipient Role
+          type: string
+        severity:
+          description: low, medium, high or critical.
+          examples:
+          - high
+          title: Severity
+          type: string
+        subject_ref:
+          description: What it is about.
+          examples:
+          - lead:42
+          title: Subject Ref
+          type: string
+        title:
+          description: One-line headline.
+          examples:
+          - Lead waits for reply
+          title: Title
+          type: string
+        body:
+          description: Plain-text details.
+          examples:
+          - No reply for 2 days.
+          title: Body
+          type: string
+        count:
+          description: How many times it was raised inside the dedup window.
+          examples:
+          - 1
+          title: Count
+          type: integer
+        read_at:
+          anyOf:
+          - format: date-time
+            type: string
+          - type: 'null'
+          description: When it was read; null when unread.
+          examples:
+          - null
+          title: Read At
+        created_at:
+          description: When it was first raised.
+          examples:
+          - '2026-09-13T12:00:00Z'
+          format: date-time
+          title: Created At
+          type: string
+        deliveries:
+          description: Delivery steps so far.
+          examples:
+          - []
+          items:
+            $ref: '#/components/schemas/DeliveryResponse'
+          title: Deliveries
+          type: array
+      required:
+      - id
+      - recipient_role
+      - severity
+      - subject_ref
+      - title
+      - body
+      - count
+      - read_at
+      - created_at
+      - deliveries
+      title: NotificationDetailResponse
+      type: object
+    NotificationListResponse:
+      properties:
+        count:
+          description: Total matching notifications.
+          examples:
+          - 1
+          title: Count
+          type: integer
+        next:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Next page URL.
+          examples:
+          - null
+          title: Next
+        previous:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Previous page URL.
+          examples:
+          - null
+          title: Previous
+        results:
+          description: Newest first.
+          examples:
+          - []
+          items:
+            $ref: '#/components/schemas/NotificationResponse'
+          title: Results
+          type: array
+      required:
+      - count
+      - next
+      - previous
+      - results
+      title: NotificationListResponse
+      type: object
+    NotificationResponse:
+      properties:
+        id:
+          description: Notification id.
+          examples:
+          - 7
+          title: Id
+          type: integer
+        recipient_role:
+          description: Who should act.
+          examples:
+          - sales
+          title: Recipient Role
+          type: string
+        severity:
+          description: low, medium, high or critical.
+          examples:
+          - high
+          title: Severity
+          type: string
+        subject_ref:
+          description: What it is about.
+          examples:
+          - lead:42
+          title: Subject Ref
+          type: string
+        title:
+          description: One-line headline.
+          examples:
+          - Lead waits for reply
+          title: Title
+          type: string
+        body:
+          description: Plain-text details.
+          examples:
+          - No reply for 2 days.
+          title: Body
+          type: string
+        count:
+          description: How many times it was raised inside the dedup window.
+          examples:
+          - 1
+          title: Count
+          type: integer
+        read_at:
+          anyOf:
+          - format: date-time
+            type: string
+          - type: 'null'
+          description: When it was read; null when unread.
+          examples:
+          - null
+          title: Read At
+        created_at:
+          description: When it was first raised.
+          examples:
+          - '2026-09-13T12:00:00Z'
+          format: date-time
+          title: Created At
+          type: string
+      required:
+      - id
+      - recipient_role
+      - severity
+      - subject_ref
+      - title
+      - body
+      - count
+      - read_at
+      - created_at
+      title: NotificationResponse
+      type: object
+    ReadAllRequest:
+      additionalProperties: false
+      properties:
+        role:
+          anyOf:
+          - maxLength: 64
+            type: string
+          - type: 'null'
+          default: null
+          description: Mark only this recipient role's notifications.
+          examples:
+          - sales
+          title: Role
+      title: ReadAllRequest
+      type: object
+    UnreadCountResponse:
+      properties:
+        unread:
+          description: Unread notifications in the channel.
+          examples:
+          - 3
+          title: Unread
+          type: integer
+      required:
+      - unread
+      title: UnreadCountResponse
+      type: object
+    UpdatedResponse:
+      properties:
+        updated:
+          description: Notifications marked read.
+          examples:
+          - 3
+          title: Updated
+          type: integer
+      required:
+      - updated
+      title: UpdatedResponse
+      type: object
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
