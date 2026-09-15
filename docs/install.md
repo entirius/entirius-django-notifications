@@ -40,7 +40,6 @@ The only settings table. Every value except `NOTIFICATIONS_ALLOW_LIVE_SENDS` is 
 | `NOTIFICATIONS_DEDUP_WINDOW_S` | `60` | an unread repeat of `subject_ref` + `title` inside this window is counted, not duplicated |
 | `NOTIFICATIONS_QUEUE_DEFAULT` | `notifications_default` | the queue of `deliver` and `escalate` |
 | `NOTIFICATIONS_DELIVERY_STALE_MINUTES` | `30` | a `pending` delivery untouched this long is re-enqueued by the next escalation run |
-| `NOTIFICATIONS_ESCALATION_INTERVAL_S` | `60` | documentation value only — the host's beat entry sets the real interval |
 | `NOTIFICATIONS_ALLOW_LIVE_SENDS` | `False` | read at send time: email and chat send outside `ENVIRONMENT == "production"` only when true |
 | `ENVIRONMENT` (host) | — | `production` opens the live gate; `development` registers the test endpoints |
 

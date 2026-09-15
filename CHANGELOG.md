@@ -25,3 +25,6 @@ call, and nothing important waits unseen.
   read-only notifications. The webhook URL never reaches a log, `last_error` or the API.
 - Docs: `docs/` (`api.md`, `concept.md`, `install.md`, `operations.md`, `testing.md`, `gotchas.md`,
   `openapi.yaml`, `erd-config.yaml`); `AGENTS.md` with the covered edge-case IDs N-01…N-05.
+- **Fix (item 8): removed the dead `NOTIFICATIONS_ESCALATION_INTERVAL_S` setting.** It was never read —
+  the beat schedule (`CELERY_BEAT_SCHEDULE`) is host-owned and its `schedule` value was hardcoded in
+  `docs/install.md`, not sourced from this setting. Removed from `settings.py` and the settings table.
