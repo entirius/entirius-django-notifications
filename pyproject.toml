@@ -46,8 +46,6 @@ test = [
 Repository = "https://github.com/entirius/entirius-django-notifications"
 
 # entirius-py-googlechat is not on PyPI until its first pre-release — resolve the sibling clone meanwhile.
-[tool.uv.sources]
-entirius-py-googlechat = { path = "../../py/entirius-py-googlechat", editable = true }
 
 [build-system]
 requires = ["hatchling"]

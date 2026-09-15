@@ -378,8 +378,8 @@ requires-dist = [
     { name = "entirius-django-email", marker = "extra == 'test'", specifier = ">=4.0.1" },
     { name = "entirius-django-regional", specifier = ">=2.0.1" },
     { name = "entirius-django-utils", specifier = ">=2.0.0" },
-    { name = "entirius-py-googlechat", marker = "extra == 'googlechat'", editable = "../../py/entirius-py-googlechat" },
-    { name = "entirius-py-googlechat", marker = "extra == 'test'", editable = "../../py/entirius-py-googlechat" },
+    { name = "entirius-py-googlechat", marker = "extra == 'googlechat'", specifier = ">=0.1.0" },
+    { name = "entirius-py-googlechat", marker = "extra == 'test'", specifier = ">=0.1.0" },
     { name = "entirius-py-idx-normalizator", specifier = ">=2.0.0" },
     { name = "factory-boy", marker = "extra == 'test'" },
     { name = "pre-commit", marker = "extra == 'dev'" },
@@ -437,20 +437,14 @@ wheels = [
 [[package]]
 name = "entirius-py-googlechat"
 version = "0.1.0"
-source = { editable = "../../py/entirius-py-googlechat" }
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "httpx" },
 ]
-
-[package.metadata]
-requires-dist = [
-    { name = "httpx", specifier = ">=0.27" },
-    { name = "pre-commit", marker = "extra == 'dev'" },
-    { name = "pytest", marker = "extra == 'test'" },
-    { name = "respx", marker = "extra == 'test'" },
-    { name = "ruff", marker = "extra == 'dev'" },
+sdist = { url = "https://files.pythonhosted.org/packages/14/88/43d2b9aa93954044200d08c3899695d170266ff9780cbd0a0ddbc77f58ed/entirius_py_googlechat-0.1.0.tar.gz", hash = "sha256:83868975e83ea050170500f47ee5a9bf102870d3d547771b1f97fe7d447a305e", size = 30654, upload-time = "2026-09-15T17:46:41.266Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/81/05/c12ca1aba4a0faa2ccaf2a7e8dbe448bbf30ef5483317c444328042e08fc/entirius_py_googlechat-0.1.0-py3-none-any.whl", hash = "sha256:8741a5322426a65a6f32f2a66354679b71614f467661149d8847a40a49883a31", size = 9401, upload-time = "2026-09-15T17:46:40.425Z" },
 ]
-provides-extras = ["dev", "test"]
 
 [[package]]
 name = "entirius-py-idx-normalizator"
