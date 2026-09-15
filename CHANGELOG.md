@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.0 (unreleased)
+## 0.1.0 — 2026-09-15
 
 First release. The notification layer of the leads platform: every module asks a human for attention through one
 call, and nothing important waits unseen.
