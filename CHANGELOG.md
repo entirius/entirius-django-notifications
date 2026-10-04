@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+- Access: the module declares its own access areas on its AppConfig and its admin views (copied from the
+  entirius-django-access defaults; behaviour unchanged).
+
 ## 0.1.0 — 2026-09-15
 
 First release. The notification layer of the leads platform: every module asks a human for attention through one

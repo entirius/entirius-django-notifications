@@ -24,6 +24,8 @@ email and Google Chat when nobody reads them. App label `django_notifications`, 
 - English only; MPL-2.0 header on every `.py` (`insert-license`); no Claude attribution trailers in commits or PRs.
 - Layered: `models/` · `services/` · `schemas/` · `api/admin/` · `tasks/`. No logic in models or views.
 - Never rename the package, the app label or the table prefix; never edit a released migration.
+- Access: areas live on the AppConfig (`access_areas`, `access_route_rules`), every admin view carries
+  `access_area`; a new admin route without one fails `tests/test_access_ownership.py`.
 - Git flow: `develop` + `master`, PRs. Do not commit by default — the operator decides.
 
 ## Map
