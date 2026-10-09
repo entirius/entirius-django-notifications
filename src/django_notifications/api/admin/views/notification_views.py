@@ -32,6 +32,8 @@ class NotificationPagination(PageNumberPagination):
 
 
 class NotificationListView(AdminView):
+    access_area = "staff.baseline"
+
     @extend_schema(
         tags=_TAGS,
         operation_id="notifications_list",
@@ -59,6 +61,8 @@ class NotificationListView(AdminView):
 
 
 class UnreadCountView(AdminView):
+    access_area = "staff.baseline"
+
     @extend_schema(
         tags=_TAGS,
         summary="Count unread notifications of the channel",
@@ -70,6 +74,8 @@ class UnreadCountView(AdminView):
 
 
 class _NotificationObjectView(AdminView):
+    access_area = "staff.baseline"
+
     def notification(self, channel_idx: str, pk: int) -> Notification:
         try:
             return inbox_service.get_notification(self.channel(channel_idx), pk)
@@ -106,6 +112,8 @@ class MarkReadView(_NotificationObjectView):
 
 
 class ReadAllView(AdminView):
+    access_area = "staff.baseline"
+
     @extend_schema(
         tags=_TAGS,
         summary="Mark every unread notification of the channel read",
