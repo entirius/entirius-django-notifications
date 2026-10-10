@@ -2,7 +2,21 @@
 [project]
 name = "entirius-django-notifications"
 version = "0.1.0"
-description = "In-app, email and Google Chat notifications with escalation for the Volkanos platform"
+description = "In-app, email and Google Chat notifications with escalation for Entirius"
+keywords = ["django", "notifications", "escalation", "email", "google-chat", "celery", "ecommerce", "entirius"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Framework :: Django",
+    "Framework :: Django :: 5.2",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Office/Business",
+]
 authors = [{ name = "Entirius" }]
 maintainers = [
     { name = "Piotr Brzozowski", email = "piotrb@entirius.com" },
@@ -43,7 +57,11 @@ test = [
 ]
 
 [project.urls]
+Homepage = "https://docs.entirius.com/"
+Documentation = "https://github.com/entirius/entirius-django-notifications/tree/develop/docs"
 Repository = "https://github.com/entirius/entirius-django-notifications"
+Changelog = "https://github.com/entirius/entirius-django-notifications/blob/develop/CHANGELOG.md"
+Issues = "https://github.com/entirius/entirius-django-notifications/issues"
 
 # entirius-py-googlechat is not on PyPI until its first pre-release — resolve the sibling clone meanwhile.
 
