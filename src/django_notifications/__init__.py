@@ -3,4 +3,4 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 """In-app, email and Google Chat notifications with escalation for the Volkanos platform"""
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"

@@ -1,7 +1,7 @@
 
 [project]
 name = "entirius-django-notifications"
-version = "0.1.0"
+version = "0.2.0"
 description = "In-app, email and Google Chat notifications with escalation for Entirius"
 keywords = ["django", "notifications", "escalation", "email", "google-chat", "celery", "ecommerce", "entirius"]
 classifiers = [
